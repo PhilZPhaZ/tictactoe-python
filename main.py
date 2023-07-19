@@ -1,6 +1,6 @@
+import contextlib
 import itertools
 import sys
-import time
 import tkinter as tk
 from tkinter import messagebox
 
@@ -9,9 +9,7 @@ class TicTacToeGame(tk.Tk):
     def __init__(self):
         super().__init__()
         self.title("Tic Tac Toe Game")
-        self.geometry("528x500")
-        self.minsize(528, 500)
-        self.maxsize(528, 500)
+        self.geometry("500x500")
         self._cells = {}
         self._create_cells()
         self.turn = 0
@@ -31,24 +29,26 @@ class TicTacToeGame(tk.Tk):
         ]
 
     def _create_cells(self) -> None:
-        for row, col in itertools.product(range(3), range(3)):
-            button=tk.Button(
-                self,
-                text=None,
-                padx=63,
-                pady=63,
-                command=lambda row=row, col=col: self.callback(row, col),
-                font=('Helvetica', 27),
-                height=1,
-                width=1
-            )
+        for row in range(3):
+            self.grid_rowconfigure(row, weight=1)
+            for col in range(3):
+                self.grid_columnconfigure(col, weight=1)
+                button=tk.Button(
+                    self,
+                    text=None,
+                    command=lambda row=row, col=col: self.callback(row, col),
+                    font=('Helvetica', 40),
+                    width=10, 
+                    height=2
+                )
 
-            self._cells[(row, col)] = button
+                self._cells[(row, col)] = button
 
-            button.grid(
-                row=row,
-                column=col
-            )
+                button.grid(
+                    row=row,
+                    column=col,
+                    sticky="nsew"
+                )
 
     def callback(self, row: int, col: int) -> None:
         button = self._cells[(row, col)]
@@ -72,8 +72,20 @@ class TicTacToeGame(tk.Tk):
             if len(set(symboles)) == 1 and symboles[0] != "":
                 self.win()
 
+        if all(button.cget('text') for button in self._cells.values()):
+            self.tie()
+
     def win(self):
-        if response := messagebox.askyesno("Gagné", "Bravo!"):
+        if response := messagebox.askyesno("Gagné! ", "Voulez vous recommencer ?!"):
+            self.reset()
+            self.focus_set()
+        else:
+            sys.exit()
+
+        self.focus_force()
+
+    def tie(self):
+        if response := messagebox.askyesno("Egalité", "Voulez vous recommencer ?"):
             self.reset()
             self.focus_set()
         else:
