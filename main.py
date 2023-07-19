@@ -53,9 +53,7 @@ class TicTacToeGame(tk.Tk):
     def callback(self, row: int, col: int) -> None:
         button = self._cells[(row, col)]
 
-        if button.cget('text'):
-            pass
-        else:
+        if not button.cget('text'):
             if self.turn % 2 == 0:
                 button.configure(text="X")
             else:
@@ -75,9 +73,7 @@ class TicTacToeGame(tk.Tk):
                 self.win()
 
     def win(self):
-        response = messagebox.askyesno("Gagné", "Bravo!")
-
-        if response:
+        if response := messagebox.askyesno("Gagné", "Bravo!"):
             self.reset()
             self.focus_set()
         else:
