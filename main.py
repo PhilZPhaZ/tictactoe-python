@@ -1,5 +1,3 @@
-import contextlib
-import itertools
 import sys
 import tkinter as tk
 from tkinter import messagebox
